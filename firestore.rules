@@ -10,6 +10,13 @@ service cloud.firestore {
         && request.resource.data.owner == request.auth.uid;
       allow delete: if request.auth != null
         && resource.data.owner == request.auth.uid;
+      match /accesses/{accessId} {
+        allow read: if request.auth != null
+          && get(/databases/$(database)/documents/shareLinks/$(token)).data.owner == request.auth.uid;
+        allow create: if request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.name.size() < 80;
+      }
     }
   }
 }
